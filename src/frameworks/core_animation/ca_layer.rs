@@ -53,6 +53,7 @@ pub(super) struct CALayerHostObject {
     pub(super) needs_display_on_bounds_change: bool,
     /// `CGImageRef*`
     pub(super) contents: id,
+    pub(super) contents_scale: CGFloat,
     /// For CAEAGLLayer only
     pub(super) drawable_properties: id,
     /// For CAEAGLLayer only (internal state for compositor)
@@ -130,6 +131,7 @@ pub const CLASSES: ClassExports = objc_classes! {
         needs_display: false,
         needs_display_on_bounds_change: false,
         contents: nil,
+        contents_scale: 1.0,
         drawable_properties: nil,
         presented_pixels: None,
         cg_context: None,
@@ -499,7 +501,13 @@ pub const CLASSES: ClassExports = objc_classes! {
     retain(env, new_contents);
     release(env, old_contents);
 }
+- (CGFloat)contentsScale {
+    env.objc.borrow::<CALayerHostObject>(this).contents_scale
+}
 
+- (())setContentsScale:(CGFloat)scale {
+    env.objc.borrow_mut::<CALayerHostObject>(this).contents_scale = scale;
+}
 - (())setEdgeAntialiasingMask:(u32)mask {
     todo_objc_setter!(this, mask);
 }
